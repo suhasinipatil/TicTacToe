@@ -1,3 +1,5 @@
+import BotPlayingStrategy.BotPlayingStrategy;
+
 public class Bot extends Player{
     private BotPlayingStrategy botPlayingStrategy;
 
