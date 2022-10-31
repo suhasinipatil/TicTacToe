@@ -106,6 +106,7 @@ public class Game {
             if(winningStrategy.checkVictory(this.board, potentialMove)){
                 GameStatus = Models.GameStatus.END;
                 playerWinner = this.playerList.get(this.LastMovedPlayerIndex);
+                this.board.display();
                 System.out.println(playerWinner.getName() + " has won!!!");
                 return;
             }
