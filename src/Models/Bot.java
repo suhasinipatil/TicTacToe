@@ -1,5 +1,7 @@
 package Models;
 
+import Factories.BotDifficultyFactory;
+import Factories.BotPlayingStrategyFactory;
 import Strategies.BotPlayingStrategy.BotPlayingStrategy;
 
 public class Bot extends Player{
@@ -26,5 +28,11 @@ public class Bot extends Player{
 
     public void setBotPlayingStrategy(BotPlayingStrategy botPlayingStrategy) {
         this.botPlayingStrategy = botPlayingStrategy;
+    }
+
+    @Override
+    public Move makeMove(Board board) {
+        BotPlayingStrategy botPlayingStrategy1 = BotPlayingStrategyFactory.getBotPlayingStrategy(this.botDifficulty);
+        return botPlayingStrategy1.makeMove(board, this);
     }
 }
