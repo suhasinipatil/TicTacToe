@@ -100,7 +100,12 @@ public class Game {
         this.moveList.add(potentialMove);
         this.board.getCell(potentialMove.getRow(), potentialMove.getCol()).setPlayer(this.playerList.get(this.LastMovedPlayerIndex));
 
-        filledCells += 1;
+        System.out.println("Want to undo the last move?");
+        String doUndo = "Yes";
+        if(doUndo == "Yes")
+            undo(potentialMove);
+        else
+            filledCells += 1;
 
         for(WinningStrategy winningStrategy : winningStrategyList){
             if(winningStrategy.checkVictory(this.board, potentialMove)){
@@ -116,6 +121,10 @@ public class Game {
             GameStatus = Models.GameStatus.DRAW;
             System.out.println("Game is Draw!!!");
         }
+    }
+
+    public void undo(Move move){
+        move.setPlayer(null);
     }
 
     public static class Builder{
