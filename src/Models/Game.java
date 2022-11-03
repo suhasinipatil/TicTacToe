@@ -100,31 +100,34 @@ public class Game {
         this.moveList.add(potentialMove);
         this.board.getCell(potentialMove.getRow(), potentialMove.getCol()).setPlayer(this.playerList.get(this.LastMovedPlayerIndex));
 
+        Scanner scanner = new Scanner(System.in);
         System.out.println("Want to undo the last move?");
-        String doUndo = "Yes";
-        if(doUndo == "Yes")
+
+        String doUndo = scanner.next();
+        if(doUndo.contains("Yes"))
             undo(potentialMove);
-        else
+        else {
             filledCells += 1;
 
-        for(WinningStrategy winningStrategy : winningStrategyList){
-            if(winningStrategy.checkVictory(this.board, potentialMove)){
-                GameStatus = Models.GameStatus.END;
-                playerWinner = this.playerList.get(this.LastMovedPlayerIndex);
-                this.board.display();
-                System.out.println(playerWinner.getName() + " has won!!!");
-                return;
+            for (WinningStrategy winningStrategy : winningStrategyList) {
+                if (winningStrategy.checkVictory(this.board, potentialMove)) {
+                    GameStatus = Models.GameStatus.END;
+                    playerWinner = this.playerList.get(this.LastMovedPlayerIndex);
+                    this.board.display();
+                    System.out.println(playerWinner.getName() + " has won!!!");
+                    return;
+                }
             }
-        }
 
-        if(filledCells == (this.playerList.size() + 1) * (this.playerList.size() + 1)){
-            GameStatus = Models.GameStatus.DRAW;
-            System.out.println("Game is Draw!!!");
+            if (filledCells == (this.playerList.size() + 1) * (this.playerList.size() + 1)) {
+                GameStatus = Models.GameStatus.DRAW;
+                System.out.println("Game is Draw!!!");
+            }
         }
     }
 
     public void undo(Move move){
-        move.setPlayer(null);
+        board.undo(move);
     }
 
     public static class Builder{

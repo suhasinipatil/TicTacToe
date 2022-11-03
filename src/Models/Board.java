@@ -53,4 +53,10 @@ public class Board {
     public void setBoard(ArrayList<ArrayList<Cell>> board) {
         this.board = board;
     }
+
+    public void undo(Move move) {
+        Cell cell = getCell(move.getRow(), move.getCol());
+        cell.setPlayer(null);
+
+    }
 }
