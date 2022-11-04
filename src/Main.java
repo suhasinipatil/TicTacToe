@@ -1,10 +1,8 @@
 import Factories.BotDifficultyFactory;
 import Factories.PlayerFactory;
 import Factories.WinningStrategyFactory;
-import Models.Game;
-import Models.GameStatus;
-import Models.Player;
-import Strategies.WinningStrategy.WinningStrategy;
+import Models.*;
+import Strategies.WinningStrategy.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +27,7 @@ public class Main {
             System.out.println("Symbol of Bot " + (i+1));
             Character symbol = scanner.next().charAt(0);
 
-            System.out.println("Difficulty level of Bot " + (i+1));
-            String botDifficulty = scanner.next();
-
-            players.add(PlayerFactory.createBotPlayer(name, symbol, BotDifficultyFactory.getBotDifficultyLevelByName(botDifficulty)));
+            players.add(PlayerFactory.createBotPlayer(name, symbol, BotDifficulty.Easy));
         }
 
         for(int i = 0;i < numberOfPlayers; i++){
@@ -45,16 +40,7 @@ public class Main {
             players.add(PlayerFactory.createHumanPlayer(name, symbol));
         }
 
-        System.out.println("How many strategies?");
-        int numberOfStrategies = scanner.nextInt();
-
-        List<WinningStrategy> winningStrategyList = new ArrayList<>();
-        for(int i = 0; i < numberOfStrategies; i++){
-            System.out.println("Name strategy " + (i+1));
-            winningStrategyList.add(WinningStrategyFactory.getWinningStrategyByName(scanner.next()));
-        }
-
-        Game game = Game.getbuilder().setWinningStrategyList(winningStrategyList).setPlayerList(players).build();
+        Game game = Game.getbuilder().setPlayerList(players).build();
 
         while (game.getGameStatus().equals(GameStatus.IN_PROGRESS)){
             game.makeMove();

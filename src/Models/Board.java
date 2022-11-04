@@ -22,6 +22,7 @@ public class Board {
     }
 
     public void display(){
+        System.out.println("Board");
         for(List<Cell> row : board){
             for(Cell cell : row){
                 if(cell.getPlayer() == null){

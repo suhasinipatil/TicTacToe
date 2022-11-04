@@ -1,7 +1,7 @@
 package Models;
 
 import Exceptions.DuplicateSymbolException;
-import Strategies.WinningStrategy.WinningStrategy;
+import Strategies.WinningStrategy.*;
 
 import java.util.*;
 
@@ -100,30 +100,34 @@ public class Game {
         this.moveList.add(potentialMove);
         this.board.getCell(potentialMove.getRow(), potentialMove.getCol()).setPlayer(this.playerList.get(this.LastMovedPlayerIndex));
 
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Want to undo the last move?");
-
-        String doUndo = scanner.next();
-        if(doUndo.contains("Yes"))
-            undo(potentialMove);
-        else {
-            filledCells += 1;
-
-            for (WinningStrategy winningStrategy : winningStrategyList) {
-                if (winningStrategy.checkVictory(this.board, potentialMove)) {
-                    GameStatus = Models.GameStatus.END;
-                    playerWinner = this.playerList.get(this.LastMovedPlayerIndex);
-                    this.board.display();
-                    System.out.println(playerWinner.getName() + " has won!!!");
-                    return;
-                }
-            }
-
-            if (filledCells == (this.playerList.size() + 1) * (this.playerList.size() + 1)) {
-                GameStatus = Models.GameStatus.DRAW;
-                System.out.println("Game is Draw!!!");
+        if(this.playerList.get(this.LastMovedPlayerIndex).getPlayerType() == PlayerType.Human){
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("If you want to undo the last move, press u else press alphabet");
+            String doUndo = scanner.next();
+            if(doUndo.toLowerCase().contains("u")) {
+                undo(potentialMove);
+                return;
             }
         }
+
+        filledCells += 1;
+
+        for (WinningStrategy winningStrategy : winningStrategyList) {
+            if (winningStrategy.checkVictory(this.board, potentialMove)) {
+                GameStatus = Models.GameStatus.END;
+                playerWinner = this.playerList.get(this.LastMovedPlayerIndex);
+                this.board.display();
+                System.out.println(playerWinner.getName() + " has won!!!");
+                return;
+            }
+        }
+
+        if (filledCells == (this.playerList.size() + 1) * (this.playerList.size() + 1)) {
+            GameStatus = Models.GameStatus.DRAW;
+            this.board.display();
+            System.out.println("Game is Draw!!!");
+        }
+
     }
 
     public void undo(Move move){
@@ -132,19 +136,19 @@ public class Game {
 
     public static class Builder{
         private List<Player> playerList;
-        private List<WinningStrategy> winningStrategyList;
+        private List<WinningStrategy> winningStrategyList = new ArrayList<>();;
 
         public Builder setPlayerList(List<Player> playerList) {
             this.playerList = playerList;
             return this;
         }
 
-        public Builder setWinningStrategyList(List<WinningStrategy> winningStrategyList) {
-            this.winningStrategyList = winningStrategyList;
-            return this;
+        private void setWinningStrategyList() {
+            this.winningStrategyList.add(new ColWinningStrategy());
+            this.winningStrategyList.add(new CornerWinningStrategy());
+            this.winningStrategyList.add(new DiagWinningStrategy());
+            this.winningStrategyList.add(new RowWinningStrategy());
         }
-
-
 
         public Game build(){
             Set<Character> alreadyExistingCharacters = new HashSet<>();
@@ -155,6 +159,7 @@ public class Game {
                 }
                 alreadyExistingCharacters.add(player.getSymbol().getCharacter());
             }
+            setWinningStrategyList();
 
             Game game = new Game();
             game.board = new Board(playerList.size() + 1);
